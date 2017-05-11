@@ -27,8 +27,12 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    //URL to the php file to interact and return rows from table collectionunit in database vitaran
     String mapURL = "http://192.168.1.2/showMap.php";
     BitmapDescriptor bitmapd;
+    
+    //sydn is an array of LatLng that has maximum of 30locations at a time. 
+    //This means on a particular time at max 30 pins can be pointed.
     LatLng[] sydn= new LatLng[30];
     private GoogleMap mMap;
     double lat, lng;
@@ -49,8 +53,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -87,7 +90,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         sydn[i] = new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
                         mMap.addMarker(new MarkerOptions().position(sydn[i])
                                 .title(nam)).setIcon(bitmapd);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydn[i]));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydn[i],12));
                         //points.add(i + " " + lat + " " + lng + " " + chk + "\n");
                     }
 
@@ -103,42 +106,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         requestQueue.add(jsonObjectRequest);
-
-
-//map2
-
-        //original
-
-
         mMap = googleMap;
-
-        //  for (int i = 0; i < points.size(); i++) {
-        //  StringTokenizer st = new StringTokenizer(points.get(i), " ");
-        //  nam = st.nextToken();
-        //  lat = Double.parseDouble(st.nextToken());
-        //  lng = Double.parseDouble(st.nextToken());
-        //  chk = st.nextToken();
-        //  Toast.makeText(getBaseContext(),"latitude :"+lat+"\n"+"longitude :"+lng,Toast.LENGTH_LONG).show();
-        // Add a marker in Sydney and move the camera
-        //  LatLng donor = new LatLng(lat, lng);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //    bitmapd
-        //             = BitmapDescriptorFactory.defaultMarker(
-        //             BitmapDescriptorFactory.HUE_YELLOW);
-        //    if (chk.equals("0")) {
-       /*         bitmapd
-                        = BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_GREEN);
-            } else {
-                bitmapd
-                        = BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_RED);
-
-            }
-
-            mMap.addMarker(new MarkerOptions().position(donor).title("nam").icon(bitmapd));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(donor));
-
-        }}*/
     }
 }
