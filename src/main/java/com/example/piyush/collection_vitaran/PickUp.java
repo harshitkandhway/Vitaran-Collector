@@ -3,6 +3,7 @@ package com.example.piyush.collection_vitaran;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,25 +31,41 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import static com.android.volley.Request.*;
+/*
 
+ Few features yet to be implemented in the collection app which are missing are as follows :
+
+    1)  When a donor is selected from the spinner list and is confirmed pickup ,donor must be removed instantaneously from the list ,but currently it is
+        removed when app runs another time.
+
+    2)  When we select a donor from the spinner it is displayed in the non editable textbox,it must be focused as the current pin on google map ,instead
+        the last donor which present in the collctionunit table is zoomed upon.
+
+    3)  The final functionality of checkout button is missing currently,because the database are not yet integrated,once done this button will make sure
+        that all successful donations are removed from the collection unit table.
+
+
+ */
 
 public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-    String mapURL = "http://192.168.1.2/showMap.php";
-    String updateURL = "http://192.168.1.2/updatecollection.php";
+    //URL of the php file in the server that is responsible for sending data from 'collectionunit' table to the android app
+    String mapURL = "http://192.168.1.5/showMap.php";
+    //URL of the php file in the server that is responsible for updating data when items are colected by the collection unit from respective donors
+    String updateURL = "http://192.168.1.5/updatecollection.php";
     RequestQueue requestQueue;
     String selected="";
-    String[] points;
+    String[] points;//String array used for populating spinner
     ArrayAdapter<String> adapter;
-    Spinner smap;
+    android.support.v7.widget.AppCompatSpinner smap;
     int count;
     EditText editText;
-    TextView tv,tv_total;
+    TextView tv,tv_total;//tv_total represents total number of lines or rows present in the collectionunit table in vitaran database
     Button back,chkout,cnfrm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_up);
-        smap = (Spinner)findViewById(R.id.spinner);
+        smap = (AppCompatSpinner) findViewById(R.id.spinner);
         smap.setOnItemSelectedListener(this);
         editText = (EditText)findViewById(R.id.editText);
         cnfrm = (Button)findViewById(R.id.button5);
@@ -89,10 +106,11 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
                         String lat = item.getString("latitude");
                         String lng = item.getString("longitude");
                         String chk = item.getString("confirm");
-                        if(chk.equals("0")){
-                            points[count]=(id+" "+name);
-                            count++;
-                        }
+                        if(chk.equals("0"))
+                            points[i]=(id+" "+name);
+                            else
+                                points[i]="---";
+
 
                         //tv.append(points[i]+"\n");
                     }
@@ -106,6 +124,13 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
 
                 } catch (Exception e) {
                     //tv.setText("inside catch");
+                    Toast.makeText(getBaseContext(),"There are no donors present",Toast.LENGTH_LONG).show();
+                    points[0]="---";
+                    adapter = new ArrayAdapter(PickUp.this,android.R.layout.simple_spinner_item,points);
+// Specify the layout to use when the list of choices appears
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+                    smap.setAdapter(adapter);
                     e.printStackTrace();
                 }
             }
@@ -125,7 +150,7 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
                 StringTokenizer str = new StringTokenizer(selected," ");
                 final String id2 = str.nextToken();
                 final String res = "1";
-                Toast.makeText(getBaseContext(),"SUCCESSFULLY UPDATED", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(),"Successfully updated", Toast.LENGTH_LONG).show();
 
                 StringRequest stringRequest = new StringRequest(Method.POST, updateURL, new Response.Listener<String>() {
                     @Override
@@ -154,7 +179,7 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
     @Override
     protected void onResume() {
         super.onResume();
-        Toast.makeText(getBaseContext(),"onResumeCalled",Toast.LENGTH_LONG).show();
+        //Toast.makeText(getBaseContext(),"onResumeCalled",Toast.LENGTH_LONG).show();
                     // Create an ArrayAdapter using the string array and a default spinner layoutu
                    // adapter = new ArrayAdapter(PickUp.this,android.R.layout.simple_spinner_item,points);
 // Specify the layout to use when the list of choices appears
@@ -168,9 +193,13 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getBaseContext(),"started",Toast.LENGTH_LONG).show();
+       try{// Toast.makeText(getBaseContext(),"started",Toast.LENGTH_LONG).show();
         selected = parent.getItemAtPosition(position).toString();
-        editText.setText(selected);
+        editText.setText("Selected Donor : "+selected);}
+       catch (Exception e)
+       {
+           editText.setText("All Items Have been Picked Up");
+       }
 
     }
 
