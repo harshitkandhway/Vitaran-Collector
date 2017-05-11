@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.example.piyush.collection_vitaran.PickUp">
+
+    <RelativeLayout
+        android:layout_width="370dp"
+        android:layout_height="492dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.473">
+
+
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="365sp"
+        android:layout_height="40sp"
+        android:text="List of donors"
+
+        android:textSize="20sp"
+        android:textStyle="bold"
+
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="365sp"
+        android:layout_height="50sp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+    android:id="@+id/button3"
+    android:layout_width="178sp"
+    android:layout_height="50sp"
+    android:text="Click to see map"
+        android:layout_above="@+id/button4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="178sp"
+        android:layout_height="50sp"
+        android:text="CheckOut"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/spinner"
+        android:layout_alignEnd="@+id/spinner"
+        android:layout_alignLeft="@+id/editText"
+        android:layout_alignStart="@+id/editText" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total items to be collected : "
+            android:textSize="24sp"
+            android:layout_alignLeft="@+id/spinner"
+            android:layout_alignStart="@+id/spinner"
+            android:layout_alignRight="@+id/textView"
+            android:layout_alignEnd="@+id/textView" />
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/button5"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:ems="10"
+            android:enabled="false"
+            android:hint="Donor to be confirmed"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update Successful Pickup"
+            android:layout_above="@+id/button3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
