@@ -1,5 +1,4 @@
 package com.example.piyush.collection_vitaran;
-
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,35 +24,42 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    //URL to the php file to interact and return rows from table collectionunit in database vitaran
-    String mapURL = "http://192.168.1.2/showMap.php";
+    String mapURL = "http://192.168.137.1/showMap.php";
     BitmapDescriptor bitmapd;
-    
-    //sydn is an array of LatLng that has maximum of 30locations at a time. 
-    //This means on a particular time at max 30 pins can be pointed.
     LatLng[] sydn= new LatLng[30];
     private GoogleMap mMap;
     double lat, lng;
-    String chk,nam;
+    String chk,nam,ID,NAME;
     RequestQueue requestQueue;
     ArrayList<String> points = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        String value = getIntent().getExtras().getString("itemSelected");
+        StringTokenizer st = new StringTokenizer(value," ");
+        ID=st.nextToken();
+        if(ID.equals("Confirmed"))
+        {
+            st.nextToken();
+            ID=st.nextToken();
+            NAME=st.nextToken();
+        }
+        else
+        {
+            NAME=st.nextToken();
+        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         }
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -61,22 +67,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        //original
         requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, mapURL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
                 try {
-
                     JSONArray aitem = response.getJSONArray("maps");
                     for (int i = 0; i < aitem.length(); i++) {
                         JSONObject item = aitem.getJSONObject(i);
+                        String id = item.getString("dID");
                         String nam = item.getString("dName");
                         String lat = item.getString("latitude");
                         String lng = item.getString("longitude");
                         String chk = item.getString("confirm");
+                        String phn = item.getString("dPhone");
                         if (chk.equals("1")) {
                 bitmapd
                         = BitmapDescriptorFactory.defaultMarker(
@@ -85,15 +89,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 bitmapd
                         = BitmapDescriptorFactory.defaultMarker(
                         BitmapDescriptorFactory.HUE_RED);
-
             }
                         sydn[i] = new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
+                        /*
+                        Bug ID-35 related to testcase Quarks-4
+                        Bug Status : (solved)
+                        Bug : Show the name along with the contact number of a donor.
+                        Solution : Contact number fetched into variable phn and added it to title of Marker.
+                         */
+
                         mMap.addMarker(new MarkerOptions().position(sydn[i])
-                                .title(nam)).setIcon(bitmapd);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydn[i],12));
+                                .title(nam+" "+phn)).setIcon(bitmapd);
+                        if(nam.equals(NAME)&& id.equals(ID)) {
+                            //suggestion accepted : Zoom in to the currently selected donor
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydn[i], 25));
+                        }
                         //points.add(i + " " + lat + " " + lng + " " + chk + "\n");
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -106,6 +118,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         requestQueue.add(jsonObjectRequest);
-        mMap = googleMap;
     }
 }
