@@ -49,11 +49,11 @@ import static com.android.volley.Request.*;
 
 public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     //URL of the php file in the server that is responsible for sending data from 'collectionunit' table to the android app
-    String mapURL = "http://192.168.1.5/showMap.php";
+    String mapURL = "http://192.168.137.1/showMap.php";
     //URL of the php file in the server that is responsible for updating data when items are colected by the collection unit from respective donors
-    String updateURL = "http://192.168.1.5/updatecollection.php";
+    String updateURL = "http://192.168.137.1/updatecollection.php";
     RequestQueue requestQueue;
-    String selected="";
+    String selected;
     String[] points;//String array used for populating spinner
     ArrayAdapter<String> adapter;
     android.support.v7.widget.AppCompatSpinner smap;
@@ -78,7 +78,13 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(PickUp.this,MapsActivity.class);
+               try{ if(selected.equals(null)){
+                    Toast.makeText(getBaseContext(),"Server Connection Error..!",Toast.LENGTH_LONG).show();
+                }else{
+                i.putExtra("itemSelected",selected);
                 startActivity(i);
+                }}
+               catch (Exception e){Toast.makeText(getBaseContext()," ServerError ",Toast.LENGTH_LONG).show();}
             }
         });
 
@@ -99,6 +105,7 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
                     JSONArray aitem = response.getJSONArray("maps");
                     tv_total.append(" "+aitem.length());
                     points = new String[aitem.length()];
+                    int counter =0;
                     for (int i = 0; i < aitem.length(); i++) {
                         JSONObject item = aitem.getJSONObject(i);
                         String name  = item.getString("dName");
@@ -108,9 +115,17 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
                         String chk = item.getString("confirm");
                         if(chk.equals("0"))
                             points[i]=(id+" "+name);
-                            else
-                                points[i]="---";
+                            else {
 
+                              /*
+                        Bug ID-36:3 related to Improvements
+                        Bug Status : Solved
+                        Suggestion : display Confirmed : 2 abc instead of --
+                        Solution : checking if confirm field is 1 (confirm).
+                         */
+                            points[i] = ("Confirmed : " + id + " " + name);
+                            counter++;
+                            }
 
                         //tv.append(points[i]+"\n");
                     }
@@ -120,12 +135,21 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
 // Specify the layout to use when the list of choices appears
                       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
-                      smap.setAdapter(adapter);
 
+                      smap.setAdapter(adapter);
+                    if(counter==aitem.length())
+                    {
+                        Toast.makeText(getBaseContext(),"All donations have been picked up",Toast.LENGTH_LONG).show();
+                        cnfrm.setVisibility(View.INVISIBLE);
+                        editText.setVisibility(View.INVISIBLE);
+                    }
                 } catch (Exception e) {
                     //tv.setText("inside catch");
-                    Toast.makeText(getBaseContext(),"There are no donors present",Toast.LENGTH_LONG).show();
-                    points[0]="---";
+                    Toast.makeText(getBaseContext(),"Error in connecting to the server",Toast.LENGTH_LONG).show();
+                    //points[0]="No donors are present";
+                    cnfrm.setVisibility(View.INVISIBLE);
+                    back.setVisibility(View.INVISIBLE);
+                    editText.setVisibility(View.INVISIBLE);
                     adapter = new ArrayAdapter(PickUp.this,android.R.layout.simple_spinner_item,points);
 // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -195,6 +219,7 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
        try{// Toast.makeText(getBaseContext(),"started",Toast.LENGTH_LONG).show();
         selected = parent.getItemAtPosition(position).toString();
+
         editText.setText("Selected Donor : "+selected);}
        catch (Exception e)
        {

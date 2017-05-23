@@ -93,16 +93,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         sydn[i] = new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
                         /*
                         Bug ID-35 related to testcase Quarks-4
-                        Bug Status : (solved)
+                        Bug Status :  Solved
                         Bug : Show the name along with the contact number of a donor.
                         Solution : Contact number fetched into variable phn and added it to title of Marker.
                          */
 
                         mMap.addMarker(new MarkerOptions().position(sydn[i])
                                 .title(nam+" "+phn)).setIcon(bitmapd);
+                        /*
+                        Bug ID-36:1 related to Improvements
+                        Bug Status : Solved
+                        Suggestion : Zoom in on selected donor.
+                        Solution : match name and donor ID with those of the donor selected, if they match then zoom in to that
+                        particular donor, zoom level 20.
+                         */
+
                         if(nam.equals(NAME)&& id.equals(ID)) {
-                            //suggestion accepted : Zoom in to the currently selected donor
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydn[i], 25));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydn[i], 20));
                         }
                         //points.add(i + " " + lat + " " + lng + " " + chk + "\n");
                     }
