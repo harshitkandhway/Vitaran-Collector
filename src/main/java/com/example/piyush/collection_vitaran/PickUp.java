@@ -72,7 +72,7 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
         tv = (TextView)findViewById(R.id.textView);
         tv_total = (TextView)findViewById(R.id.textView2);
         back = (Button)findViewById(R.id.button3);
-        chkout =(Button)findViewById(R.id.button4);
+        ///chkout =(Button)findViewById(R.id.button4);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,12 +88,7 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
             }
         });
 
-        chkout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"Successfully collected all items",Toast.LENGTH_LONG).show();
-            }
-        });
+
         requestQueue = Volley.newRequestQueue(this);
         //tv.setText("outside JSON");
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Method.POST,mapURL ,null, new Response.Listener<JSONObject>() {
@@ -116,14 +111,13 @@ public class PickUp extends AppCompatActivity implements AdapterView.OnItemSelec
                         if(chk.equals("0"))
                             points[i]=(id+" "+name);
                             else {
-
-                              /*
-                        Bug ID-36:3 related to Improvements
-                        Bug Status : Solved
-                        Suggestion : display Confirmed : 2 abc instead of --
-                        Solution : checking if confirm field is 1 (confirm).
-                         */
-                            points[i] = ("Confirmed : " + id + " " + name);
+                            /*
+                               Bug ID-36:3 related to Improvements
+                               Bug Status : Solved
+                               Suggestion : display Confirmed : 2 abc instead of --
+                               Solution : checking if confirm field is 1 (confirm).
+                            */
+                            points[i] = ("Confirmed: "+id + " " + name );
                             counter++;
                             }
 

@@ -30,7 +30,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LatLng[] sydn= new LatLng[30];
     private GoogleMap mMap;
     double lat, lng;
-    String chk,nam,ID,NAME;
+    String chk,nam,ID,NAME,ITEM;
     RequestQueue requestQueue;
     ArrayList<String> points = new ArrayList<>();
     @Override
@@ -40,15 +40,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String value = getIntent().getExtras().getString("itemSelected");
         StringTokenizer st = new StringTokenizer(value," ");
         ID=st.nextToken();
-        if(ID.equals("Confirmed"))
+
+
+        if(ID.equals("Confirmed:"))
         {
-            st.nextToken();
+
             ID=st.nextToken();
-            NAME=st.nextToken();
+             Toast.makeText(getBaseContext(),"id is"+ID,Toast.LENGTH_LONG).show();
+
+            //NAME=st.nextToken();
+           // st.nextToken();
+           // ITEM = st.nextToken();
         }
         else
         {
-            NAME=st.nextToken();
+           // StringTokenizer st2 = new StringTokenizer(st.nextToken(),":");
+            //NAME=st.nextToken();
+            //st.nextToken();
+            //ITEM = st.nextToken();
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -92,12 +101,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
                         sydn[i] = new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
                         /*
-                        Bug ID-35 related to testcase Quarks-4
-                        Bug Status :  Solved
-                        Bug : Show the name along with the contact number of a donor.
-                        Solution : Contact number fetched into variable phn and added it to title of Marker.
-                         */
-
+                            Bug ID-35 related to testcase Quarks-4
+                            Bug Status :  Solved
+                            Bug : Show the name along with the contact number of a donor.
+                            Solution : Contact number fetched into variable phn and added it to title of Marker.
+                        */
+//Toast.makeText(getBaseContext(),nam,Toast.LENGTH_LONG).show();
+                        //String x = nam.split(":");
                         mMap.addMarker(new MarkerOptions().position(sydn[i])
                                 .title(nam+" "+phn)).setIcon(bitmapd);
                         /*
@@ -108,7 +118,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         particular donor, zoom level 20.
                          */
 
-                        if(nam.equals(NAME)&& id.equals(ID)) {
+                        if(id.equals(ID)) {
+                            Toast.makeText(getBaseContext(),"checkedID is:"+id,Toast.LENGTH_LONG).show();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydn[i], 20));
                         }
                         //points.add(i + " " + lat + " " + lng + " " + chk + "\n");
